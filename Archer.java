@@ -1,120 +1,124 @@
 // I worked on the homework assignment alone, using only course materials.
 /**
- * This is the Archer class and it is a subclass of the Hero class.
+ * Archer class.
  *
- * @author farinazzahiri
+ * @author farinaz zahiri
  * @version 1.0
  */
-public class Archer extends Hero {
-    private boolean hasArmorEquipped;
+public class Archer extends Troop implements Treatable {
+    private String hairColor;
 
     /**
-     * Constructor that takes in initName, initHealth, initDamage, and initHasArmoEquipped.
+     * 4 arg constructor for archer.
      *
-     * @param initName of type String
-     * @param initHealth of type int
-     * @param initDamage of type int
-     * @param initHasArmorEquipped of type boolean
+     * @param name String
+     * @param experienceLevel int
+     * @param health int
+     * @param hairColor String
      */
-    public Archer(String initName, int initHealth, int initDamage, boolean initHasArmorEquipped) {
-        super(initName, initHealth, initDamage);
-        hasArmorEquipped = initHasArmorEquipped;
+    public Archer(String name, int experienceLevel, int health, String hairColor) {
+        super(name, experienceLevel, health);
+        this.hairColor = hairColor;
     }
 
     /**
-     * Constructor that takes in initName and initHealth.
+     * one arg constructor for archer.
      *
-     * @param initName of type String
-     * @param initHealth of type int
+     * @param hairColor String
      */
-
-    public Archer(String initName, int initHealth) {
-        this(initName, initHealth, 4, false);
+    public Archer(String hairColor) {
+        this("Sally", 10, 15, hairColor);
     }
 
     /**
-     * Constructor that takes in initName.
+     * getter for hair color.
      *
-     * @param initName of type String
+     * @return String
      */
-
-    public Archer(String initName) {
-        this(initName, 20);
+    public String getHairColor() {
+        return hairColor;
     }
 
     /**
-     * Method to equip armor.
+     * setter for hair color.
+     *
+     * @param newHairColor String
      */
+    public void setHairColor(String newHairColor) {
+        hairColor = newHairColor;
+    }
 
-    public void equipArmor() {
-        if (isAlive()) {
-            hasArmorEquipped = true;
+    /**
+     * train with method for archer.
+     *
+     * @param trooper of type troop
+     */
+    public void trainWith(Troop trooper) {
+        if (trooper.getHealth() < 5 || trooper.getHealth() == 100
+                || !(trooper instanceof Barbarian) && !(trooper instanceof Archer)
+                    || trooper.getExperienceLevel() == 50 || this.getExperienceLevel() == 50 || this.getHealth() == 100
+                        || this.getHealth() < 5) {
+            return;
+        }
+        if (trooper instanceof Archer) { // If archer is fighting another archer
+            // If the archers have different hair colors...
+            if (!(this.hairColor.equals(((Archer) trooper).hairColor))) {
+                trooper.setExperienceLevel(trooper.getExperienceLevel() + 2);
+                this.setExperienceLevel(this.getExperienceLevel() + 2);
+                System.out.println("Oof! I prefer training with other archers with the same"
+                        + " hair color as me");
+            } else { // If they have the same hair color, increase experience level and print
+                trooper.setExperienceLevel(trooper.getExperienceLevel() + 4);
+                this.setExperienceLevel(this.getExperienceLevel() + 4);
+                System.out.println("I like training with other archers with the same hair color as me");
+            }
+            // Decrease both archers health by 5
+            trooper.setHealth(trooper.getHealth() - 5);
+            this.setHealth(this.getHealth() - 5);
+        } else { // If our archer is fighting a trooper that is a barbarian,
+            this.setHealth(this.getHealth() - 10);
+            System.out.printf("Gross. Go away %s! I hate training with Barbarians!\n", trooper.getName());
         }
     }
 
     /**
-     * Method to unequip armor.
+     * How we treat an archer.
      */
-
-    public void unequipArmor() {
-        if (isAlive()) {
-            hasArmorEquipped = false;
-        }
+    public void treat() {
+        this.setHealth(this.getHealth() + 3);
     }
 
     /**
-     * Method to train archer.
+     * if an archer needs treatment.
      *
-     * @param placeToTrain type TrainingGround
+     * @return boolean
      */
-
-    public void train(TrainingGround placeToTrain) {
-        if (placeToTrain.isOutdoors()) {
-            double tm = placeToTrain.getTrainingMultiplier();
-            int damageIncrease = (int) (tm * 3);
-            increaseDamage(damageIncrease);
-        }
-
+    public boolean needsTreatment() {
+        return this.getHealth() < 80;
     }
 
     /**
-     * Method that returns hasArmorEquipped.
+     * to string method.
      *
-     * @return type boolean
+     * @return String
      */
-
-    public boolean hasArmor() {
-        return hasArmorEquipped;
-    }
-    /**
-     * Method to return entity description.
-     *
-     * @return a String
-     */
-
     public String toString() {
-        if (isAlive() && hasArmorEquipped) {
-            return super.toString() + ". I am an archer with my armor equipped";
-        } else if (isAlive() && !hasArmorEquipped) {
-            return super.toString() + ". I am an archer with my armor unequipped";
-        }
-        return super.toString() + ". I was an archer";
+        return super.toString() + String.format(". I am an archer with %s hair", hairColor);
     }
-    /**
-     * Method to check if two objects are equal.
-     *
-     * @param other object type input
-     * @return boolean stating if the objects are equal
-     */
 
-    public boolean equals(Object other) {
-        if (other == null || getClass() != other.getClass()) {
+    /**
+     * equals method.
+     *
+     * @param otherOne object type
+     * @return boolean
+     */
+    public boolean equals(Object otherOne) {
+        if (!(otherOne instanceof Archer)) {
             return false;
         }
-        Archer otherArcher = (Archer) other;
-        if (super.equals(otherArcher)) {
-            return true;
-        }
-        return false;
+        Archer otherArcher = (Archer) otherOne;
+        return super.equals(otherOne) && this.hairColor.equals(otherArcher.hairColor);
     }
+
+
 }
